@@ -26,8 +26,8 @@ function toggleChat() {
         setTimeout(() => {
             document.getElementById('chatInput').focus();
         }, 300); // Match this timeout with the CSS transition duration
-         // Added FAQ display logic
-         if (isFirstOpen) {
+        // Added FAQ display logic
+        if (isFirstOpen) {
             displayFAQs();
             isFirstOpen = false;
         }
@@ -104,11 +104,11 @@ function toggleFullscreen() {
 
 function toggleColorChange() {
     let count = parseInt(localStorage.getItem('count'), 10) || 0;
-    if (count === 0 || count % 2 !== 0) { 
+    if (count === 0 || count % 2 !== 0) {
         document.getElementById('body').style.backgroundColor = '#3c3a3a';
         document.getElementById('hero').style.backgroundColor = '#FFC300';
         document.getElementById('features-section').style.backgroundColor = '#3c3a3a';
-        localStorage.setItem('count', count + 1); 
+        localStorage.setItem('count', count + 1);
     } else {
         document.getElementById('body').style.backgroundColor = 'white';
         document.getElementById('hero').style.backgroundColor = 'white';
@@ -117,10 +117,10 @@ function toggleColorChange() {
     }
 }
 
-document.getElementById("close-notification").addEventListener("click", function() {
+document.getElementById("close-notification").addEventListener("click", function () {
     document.getElementById("chatbot-notification").style.display = "none";
-  });
-  
+});
+
 
 // Handle Enter Key Press
 function handleEnterKey(event) {
@@ -129,44 +129,6 @@ function handleEnterKey(event) {
     }
 }
 
-// Send a message to the server
-async function sendMessage() {
-    const input = document.getElementById('chatInput');
-    const message = input.value.trim();
-    const chatBody = document.getElementById('chatBody');
-    const thinkingDiv = document.getElementById('chatbot-thinking');
-  
-    if (!message) return;
-  
-    // Add user's message
-    addMessage(message, 'user');
-    // Clear input and show "Thinking..."
-    input.value = '';
-    thinkingDiv.classList.remove('hidden');
-  
-    try {
-        const response = await fetch('/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userMessage: message }),
-        });
-        const data = await response.json();
-  
-        // Hide "Thinking..."
-        thinkingDiv.classList.add('hidden');
-        if (data.response) {
-            // Show response with typewriter effect
-            
-            typeWriterEffect(data.response, chatBody);
-        } else {
-            addMessage('Sorry, something went wrong.', 'bot');
-        }
-    } catch (err) {
-        // Hide "Thinking..." and show error
-        thinkingDiv.classList.add('hidden');
-        addMessage('Error: ' + err.message, 'bot');
-    }
-}
 
 //Scroll to Bottom Function
 function scrollToBottom() {
@@ -187,12 +149,12 @@ function addMessage(content, sender) {
     if (sender === 'user') {
         icon.src = "https://cdn-icons-png.flaticon.com/512/3870/3870822.png"
         icon.height = 30;
-        icon.weight  = 30;
+        icon.weight = 30;
     }
-    else{
+    else {
         icon.src = "https://dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/wichita.sidearmsports.com/images/responsive_2023/logo_main.svg"
         icon.height = 30;
-        icon.weight  = 30;
+        icon.weight = 30;
     }
     const labelDiv = document.createElement('div');
     labelDiv.className = 'chatbot__label';
@@ -204,9 +166,9 @@ function addMessage(content, sender) {
 
 
     if (sender === "bot") {
-      textDiv.innerHTML = makeLinksClickable(content);
+        textDiv.innerHTML = makeLinksClickable(content);
     } else {
-      textDiv.textContent = content;
+        textDiv.textContent = content;
     }
 
     iconContainer.appendChild(icon);
@@ -222,25 +184,25 @@ function makeLinksClickable(text) {
     // This pattern looks for URLs starting with http(s):// or www.,
     // followed by non-whitespace characters.
     const urlPattern = /((https?:\/\/|www\.)[^\s]+)/g;
-  
+
     return text.replace(urlPattern, function (match) {
-      // Check if the URL ends with punctuation (like ., !, ?, etc.)
-      // We'll specifically look for .?!, etc. Adjust if you want to
-      // include or exclude other punctuation.
-      let trailingPunctuation = '';
-      const punctMatch = match.match(/[.,!?(){}\[\];:"'<>\s]+$/);
-  
-      if (punctMatch) {
-        trailingPunctuation = punctMatch[0];         // e.g. "."
-        // Remove trailing punctuation from the URL for the link
-        match = match.slice(0, -trailingPunctuation.length);
-      }
-  
-      // Construct the link. If it doesn't start with http, prepend it.
-      let link = match;
-      if (!match.startsWith('http')) {
-        link = 'http://' + match;
-      }
+        // Check if the URL ends with punctuation (like ., !, ?, etc.)
+        // We'll specifically look for .?!, etc. Adjust if you want to
+        // include or exclude other punctuation.
+        let trailingPunctuation = '';
+        const punctMatch = match.match(/[.,!?(){}\[\];:"'<>\s]+$/);
+
+        if (punctMatch) {
+            trailingPunctuation = punctMatch[0];         // e.g. "."
+            // Remove trailing punctuation from the URL for the link
+            match = match.slice(0, -trailingPunctuation.length);
+        }
+
+        // Construct the link. If it doesn't start with http, prepend it.
+        let link = match;
+        if (!match.startsWith('http')) {
+            link = 'http://' + match;
+        }
 
 
         return `<a href="${link}" target="_blank" rel="noopener noreferrer" style="color: #0000FF; text-decoration: underline">
@@ -252,9 +214,9 @@ function makeLinksClickable(text) {
         </a>${trailingPunctuation}`;
 
     });
-  }
+}
 
-  function toggleLinkText(event, imgElement, link) {
+function toggleLinkText(event, imgElement, link) {
     event.preventDefault(); // Prevents navigation when clicking the image
     const span = imgElement.nextElementSibling; // Get the span next to the image
 
@@ -276,149 +238,158 @@ function typeWriterEffect(text, chatBody) {
     messageDiv.className = 'chatbot__message chatbot__message--bot';
     const iconContainer = document.createElement('div');
     iconContainer.className = 'chatbot__icon-container';
-    
-  
+
+
     const labelDiv = document.createElement('div');
     labelDiv.className = 'chatbot__label';
     labelDiv.textContent = "AI Assistant";
-    
-    messageDiv.appendChild(iconContainer) 
+
+    messageDiv.appendChild(iconContainer)
     const textDiv = document.createElement('div');
     textDiv.className = 'chatbot__text';
-    labelDiv.textContent = 'Shocker Assistant';      
+    labelDiv.textContent = 'Shocker Assistant';
     textDiv.innerHTML = ""; // Will be populated letter by letter                                                                                                                   
-    
+
     const icon = document.createElement('img');
     icon.src = "https://dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/wichita.sidearmsports.com/images/responsive_2023/logo_main.svg"
     icon.height = 30;
-    icon.weight  = 30;
+    icon.weight = 30;
     iconContainer.appendChild(icon);
     messageDiv.appendChild(labelDiv);
     messageDiv.appendChild(textDiv);
     chatBody.appendChild(messageDiv);
 
-    let formattedText = makeLinksClickable(text);  
+    let formattedText = makeLinksClickable(text);
     let i = 0;
 
-     function type() {
+    function type() {
 
-         if (i < text.length) {
+        if (i < text.length) {
 
-             textDiv.textContent += text.charAt(i);
+            textDiv.textContent += text.charAt(i);
 
-             i++;
+            i++;
 
-             scrollToBottom();
+            scrollToBottom();
 
-             setTimeout(type, 15);
+            setTimeout(type, 15);
 
-         } else {
+        } else {
 
-             // Add formatted text and image AFTER typing completes
+            // Add formatted text and image AFTER typing completes
 
-             textDiv.innerHTML = makeLinksClickable(text);
+            textDiv.innerHTML = makeLinksClickable(text);
 
-             // Add image container if URL exists
+            // Add image container if URL exists
 
-             if (imageUrl && isValidImageUrl(imageUrl)) {
+            if (imageUrl && isValidImageUrl(imageUrl)) {
 
-                 const imageContainer = document.createElement('div');
+                const imageContainer = document.createElement('div');
 
-                 imageContainer.className = 'chatbot-image-container';
+                imageContainer.className = 'chatbot-image-container';
 
-                 const img = document.createElement('img');
+                const img = document.createElement('img');
 
-                 img.src = imageUrl;
+                img.src = imageUrl;
 
-                 img.alt = "Staff member photo";
+                img.alt = "Staff member photo";
 
-                 img.className = 'chatbot-image';
+                img.className = 'chatbot-image';
 
-                 // Add error handling for broken images
+                // Add error handling for broken images
 
-                 img.onerror = () => {
+                img.onerror = () => {
 
-                     imageContainer.remove();
+                    imageContainer.remove();
 
-                 };
+                };
 
-                 imageContainer.appendChild(img);
+                imageContainer.appendChild(img);
 
-                 messageDiv.appendChild(imageContainer);
+                messageDiv.appendChild(imageContainer);
 
-             }
+            }
 
-             scrollToBottom();
+            scrollToBottom();
 
-         }
+        }
 
-     }
+    }
 
-     type();
+    type();
 
-     chatBody.appendChild(messageDiv);
+    chatBody.appendChild(messageDiv);
 
- }
- 
+}
+
 // Add URL validation helper
 
- function isValidImageUrl(string) {
+function isValidImageUrl(string) {
 
-     try {
-
-         new URL(string);
-
-         return string.match(/\.(jpeg|jpg|gif|png|webp)$/i) !== null;
-
-     } catch (_) {
-
-         return false;
-
-     }
-
- }
- 
-// Update sendMessage to pass image URL
-
- async function sendMessage() {
-
-     // ... existing code ...
- 
     try {
 
-         const response = await fetch('/', {
+        new URL(string);
 
-             method: 'POST',
+        return string.match(/\.(jpeg|jpg|gif|png|webp)$/i) !== null;
 
-             headers: { 'Content-Type': 'application/json' },
+    } catch (_) {
 
-             body: JSON.stringify({ userMessage: message }),
+        return false;
 
-         });
+    }
 
-         const data = await response.json();
- 
+}
+
+// Update sendMessage to pass image URL
+// Send a message to the server
+async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+    const chatBody = document.getElementById('chatBody');
+    const thinkingDiv = document.getElementById('chatbot-thinking');
+
+    if (!message) return;
+
+    // Add user's message
+    addMessage(message, 'user');
+    // Clear input and show "Thinking..."
+    input.value = '';
+    thinkingDiv.classList.remove('hidden');
+
+    try {
+
+        const response = await fetch('/', {
+
+            method: 'POST',
+
+            headers: { 'Content-Type': 'application/json' },
+
+            body: JSON.stringify({ userMessage: message }),
+
+        });
+
+        const data = await response.json();
+
         thinkingDiv.classList.add('hidden');
 
-         if (data.response) {
+        if (data.response) {
 
-             typeWriterEffect(data.response, chatBody, data.image_url);
+            typeWriterEffect(data.response, chatBody, data.image_url);
 
-         } else {
+        } else {
 
-             addMessage('Sorry, something went wrong.', 'bot');
+            addMessage('Sorry, something went wrong.', 'bot');
 
-         }
+        }
 
-     } catch (err) {
+    } catch (err) {
 
-         thinkingDiv.classList.add('hidden');
+        thinkingDiv.classList.add('hidden');
 
-         addMessage('Error: ' + err.message, 'bot');
+        addMessage('Error: ' + err.message, 'bot');
 
-     }
-
- }
+    }
+}
 
 function scrollToBottom() {
     const chatBody = document.getElementById('chatBody');
@@ -426,7 +397,7 @@ function scrollToBottom() {
 }
 
 // Attach the click event listener once when the script loads
-document.addEventListener('click', function(event) {
+document.addEventListener('click', function (event) {
     const popup = document.getElementById('chatPopup');
     const chatbotButton = document.querySelector('.chatbot__button');
 
