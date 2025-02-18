@@ -299,19 +299,126 @@ function typeWriterEffect(text, chatBody) {
 
     let formattedText = makeLinksClickable(text);  
     let i = 0;
-    function type() {
-        if (i < text.length) {
-            textDiv.textContent += text.charAt(i);
-            i++;
-            // Scroll to the bottom gradually as text is typed
-            scrollToBottom();
-            setTimeout(type, 15); // Adjust typing speed here
-        } else {
-            textDiv.innerHTML = formattedText; // Ensure final result includes links
-          }
-    }
-    type();
-}
+
+     function type() {
+
+         if (i < text.length) {
+
+             textDiv.textContent += text.charAt(i);
+
+             i++;
+
+             scrollToBottom();
+
+             setTimeout(type, 15);
+
+         } else {
+
+             // Add formatted text and image AFTER typing completes
+
+             textDiv.innerHTML = makeLinksClickable(text);
+
+             // Add image container if URL exists
+
+             if (imageUrl && isValidImageUrl(imageUrl)) {
+
+                 const imageContainer = document.createElement('div');
+
+                 imageContainer.className = 'chatbot-image-container';
+
+                 const img = document.createElement('img');
+
+                 img.src = imageUrl;
+
+                 img.alt = "Staff member photo";
+
+                 img.className = 'chatbot-image';
+
+                 // Add error handling for broken images
+
+                 img.onerror = () => {
+
+                     imageContainer.remove();
+
+                 };
+
+                 imageContainer.appendChild(img);
+
+                 messageDiv.appendChild(imageContainer);
+
+             }
+
+             scrollToBottom();
+
+         }
+
+     }
+
+     type();
+
+     chatBody.appendChild(messageDiv);
+
+ }
+ 
+// Add URL validation helper
+
+ function isValidImageUrl(string) {
+
+     try {
+
+         new URL(string);
+
+         return string.match(/\.(jpeg|jpg|gif|png|webp)$/i) !== null;
+
+     } catch (_) {
+
+         return false;
+
+     }
+
+ }
+ 
+// Update sendMessage to pass image URL
+
+ async function sendMessage() {
+
+     // ... existing code ...
+ 
+    try {
+
+         const response = await fetch('/', {
+
+             method: 'POST',
+
+             headers: { 'Content-Type': 'application/json' },
+
+             body: JSON.stringify({ userMessage: message }),
+
+         });
+
+         const data = await response.json();
+ 
+        thinkingDiv.classList.add('hidden');
+
+         if (data.response) {
+
+             typeWriterEffect(data.response, chatBody, data.image_url);
+
+         } else {
+
+             addMessage('Sorry, something went wrong.', 'bot');
+
+         }
+
+     } catch (err) {
+
+         thinkingDiv.classList.add('hidden');
+
+         addMessage('Error: ' + err.message, 'bot');
+
+     }
+
+ }
 
 function scrollToBottom() {
     const chatBody = document.getElementById('chatBody');
