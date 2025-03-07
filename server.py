@@ -3,7 +3,7 @@ import time
 import tempfile
 import requests
 from openai import OpenAI
-from fastapi import FastAPI, Request, UploadFile, File, HTTPException
+from fastapi import FastAPI, Request, UploadFile, File, HTTPException, Depends
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -12,7 +12,8 @@ import asyncio
 import aiofiles
 import uvicorn
 import pandas as pd
-
+from pydantic import BaseModel
+import sqlite3
 from config import Settings
 
 # Instantiate the settings
@@ -31,6 +32,64 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Database setup
+def get_db():
+    conn = sqlite3.connect('users.db')
+    return conn
+
+# Create users table if it doesn't exist
+def init_db():
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+init_db()
+
+# Pydantic models for request validation
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+class UserRegister(BaseModel):
+    username: str
+    password: str
+
+# Login endpoint
+@app.post("/api/login")
+async def login(user: UserLogin):
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM users WHERE username = ? AND password = ?', (user.username, user.password))
+    user_data = cursor.fetchone()
+    conn.close()
+
+    if user_data:
+        return {"success": True, "message": "Login successful"}
+    else:
+        return {"success": False, "message": "Invalid username or password"}
+
+# Registration endpoint
+@app.post("/api/register")
+async def register(user: UserRegister):
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (user.username, user.password))
+        conn.commit()
+        conn.close()
+        return {"success": True, "message": "Registration successful"}
+    except sqlite3.IntegrityError:
+        conn.close()
+        return {"success": False, "message": "Username already exists"}
 
 # Mount the static files directory
 static_folder = os.path.join(os.path.dirname(__file__), "static")
@@ -60,11 +119,12 @@ async def handle_post(request: Request):
 async def search_data(query: str, limit: int = 100, radius: float = 0.8):
     collection_name = "user_queries"
     model_name = "text-embedding-3-large"
-
+    print("search data")
     try:
         embedding_response = await asyncio.to_thread(
             client.embeddings.create, input=query, model=model_name
         )
+        print("embedding")
         # logging.debug("Embedding response: %s", embedding_response)
         # Access the embedding using dot notation
         query_vector = embedding_response.data[0].embedding
@@ -94,9 +154,10 @@ async def search_data(query: str, limit: int = 100, radius: float = 0.8):
 
     try:
         response = requests.post(settings.ZILLIZ_URL + "/search", json=payload, headers=headers)
+        print("response: ", settings.ZILLIZ_AUTH_TOKEN)
         response.raise_for_status()  # This will raise an exception for HTTP error codes.
         result = response.json()
-
+        print("result: ", result)
         # raw_result is expected to have a structure like:
         # {'code': 0, 'cost': 6, 'data': [ { 'timestamp': 1741132395, ... }, ... ] }
         data = result.get("data", [])
