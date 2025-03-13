@@ -401,8 +401,7 @@ function addMessage(content, sender) {
     icon.src = "https://cdn-icons-png.flaticon.com/512/3870/3870822.png";
     icon.height = 30;
     icon.weight = 30;
-  }
-  else {
+  } else {
     icon.src = "https://dxbhsrqyrr690.cloudfront.net/sidearm.nextgen.sites/wichita.sidearmsports.com/images/responsive_2023/logo_main.svg";
     icon.height = 30;
     icon.weight = 30;
@@ -419,10 +418,36 @@ function addMessage(content, sender) {
     textDiv.textContent = content;
   }
 
-  iconContainer.appendChild(icon);
   messageDiv.appendChild(iconContainer);
   messageDiv.appendChild(labelDiv);
   messageDiv.appendChild(textDiv);
+
+  if (sender === 'bot') {
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'chatbot__actions';
+    actionsDiv.innerHTML = `
+      <button class="chatbot__action-button copy-button"><i class="fas fa-copy"></i></button>
+      <button class="chatbot__action-button like-button"><i class="fas fa-thumbs-up"></i></button>
+      <button class="chatbot__action-button dislike-button"><i class="fas fa-thumbs-down"></i></button>
+    `;
+    messageDiv.appendChild(actionsDiv);
+
+    // Add event listeners for the buttons
+    actionsDiv.querySelector('.copy-button').addEventListener('click', function() {
+      navigator.clipboard.writeText(content).then(() => {
+        alert('Message copied to clipboard');
+      });
+    });
+
+    actionsDiv.querySelector('.like-button').addEventListener('click', function() {
+      alert('You liked this message');
+    });
+
+    actionsDiv.querySelector('.dislike-button').addEventListener('click', function() {
+      alert('You disliked this message');
+    });
+  }
+
   chatBody.appendChild(messageDiv);
   scrollToBottom();  // Automatically scroll to bottom
 }

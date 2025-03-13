@@ -619,17 +619,6 @@ text-align: right;
   /* Icon color */
 }
 
-/* Spinning Keyframes */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 /* Dots Animation */
 .dots::after {
   content: "";
@@ -788,4 +777,67 @@ text-align: right;
 .select2-container--default .select2-selection--single .select2-selection__arrow {
   height: 40px;
   right: 10px;
+}
+
+
+
+
+/* Chatbot action buttons */
+.chatbot__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* General button styles */
+.chatbot__action-button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.15);
+}
+
+/* Copy Button - New Elegant Gold */
+.copy-button {
+  background-color: #398ec6; /* Rich Gold */
+  color: #ffffff;
+}
+
+.copy-button:hover {
+  background-color: #9a9a9a; /*grey */
+  color: white;
+}
+
+/* Like Button - New Vibrant Green */
+.like-button {
+  background-color: #2ECC71; /* Soft Green */
+  color: white;
+}
+
+.like-button:hover {
+  background-color: #9a9a9a; /* grey */
+}
+
+/* Dislike Button - New Deep Red */
+.dislike-button {
+  background-color: #E74C3C; /* Modern Red */
+  color: white;
+}
+
+.dislike-button:hover {
+  background-color: #9a9a9a; /* Grey */
+}
+
+/* Button Active Effect */
+.chatbot__action-button:active {
+  transform: scale(0.95);
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.25);
 }
