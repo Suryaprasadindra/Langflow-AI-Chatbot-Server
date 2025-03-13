@@ -779,8 +779,16 @@ text-align: right;
   right: 10px;
 }
 
+/* Spinning Keyframes */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
 
-
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 /* Chatbot action buttons */
 .chatbot__actions {
@@ -841,3 +849,5 @@ text-align: right;
   transform: scale(0.95);
   box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.25);
 }
+
+/* End */

@@ -667,4 +667,4 @@ function loadChatHistory() {
   chatHistory.forEach(message => {
     addMessage(message.content, message.sender);
   });
-}
+} // End 
